@@ -1,0 +1,67 @@
+3/19/16
+Unpacked and installed the FUSE and s3fs package. I encountered some errors
+installing both of them. I had to try a few different versions of each before
+I was able to get them to work. The error I kept getting was
+ "No package <package> found" but after looking at some fourms I was able to
+get everything installed and got the bucket mounted
+
+3/28/16
+Installed the openSSL package. I've beent trying to get a feel for the code for
+both FUSE and s3fs by inspecting the source code for each but am feeling very
+lost as to what I even need to do to start making progress on this project.
+I'm able to upload and download files to the bucket via my command line.
+I still have to try to figure out what code I need to modify. Or if I need to
+be adding functionality to the source code? I'm still going to have to try to
+figure that out this week. Overall I feel incredibly lost on this project and
+really have no idea what I'm doing. I'm really not even sure what tests to run
+on the code or how to run them.
+
+4/4/16
+So I've been trying to place some trace information into the read and write
+functions in s3fs.cpp to see if I can understand how the data is moving but
+they havent been working. I'm also certian that I'm misunderstanding something.
+Althought I dont feel completely lost in the project anymore. Moving and
+copying to and from the /mnt all works fine (to be expected). I'm just going
+to have to keep digging through the source codes. The method I've been using
+is to just use the "Find Implementation of:" tool in code::blocks in whatever
+function I'm trying to dig through. I'm just going to have to continue with
+that and see how this week goes. If I come up with a handful of questions
+I'll go to lab to see if I cant get some help.
+
+4/11/16
+
+Based on your email where you told us to keep digging in the write and read
+functions, both read, write and open functions in s3fs take me to 
+fdcache.h/fdcache.cpp so I'm pretty sure the data flows here but for the
+life of me I cannot get any trace information to show up so I'm still not
+sure exactly where it happens. I've put things like "cout << "testing" << endl;"
+and "printf("testing \n")" in all the functions I suspect to be involved
+in data flow but nothing shows up. I'll keep trying to see if I can 
+get something to work. Hopefully I can make a breakthrough soon because
+I'm running out of time  
+
+4/18/16
+
+So after reading your email about "which s3fs" I realized I've been executing
+the code in /usr/bin/s3fs and not the code I've been modifiying. So now that
+I addressed that issue all the trace information I put in my fdcache file is
+now showing up. I have it write to the syslog file. So now I just have to
+pinpoint exactly where the upload and download is happening. I'm almost sure
+its in the read and write functions but I need to be sure. Once I'm sure I
+just need to implement the RC4 library from openSSL and I should be on my way.
+Hopefully this will be done by the time I present on monday. I also need to
+add the current directory to the executable path
+
+4/25/16
+
+Demo'ed my code today after class. I was able to upload from a browser and have it
+show in my mount folder. Althought when I tried to edit it locally it would be 
+encrypted because s3fs would expect that file to already be encrypted so when
+it ran thought the decyption function in read() it would encrypt it. I was also
+able to move a text file and a picture to the bucket and have them encrypt
+successfully. I did find a bug though when trying to view the picture from the
+/mnt folder. What is suppose to happen is when I try to open it I will decrypt
+the picture for me and let me view it. It only decpyted a chunck of the file.
+I think its because I defined size to be 4KB in the read function. I'll have
+to fix that so it runs the function on the whole file. Other than that everything
+run smoothly.

@@ -1,0 +1,119 @@
+Follow this guide to properly install the packages needed to run my s3fs code
+
+***********CHANGES TO THE CODE MADE AT LINES***********
+	   1020-1022
+	   1105
+	   1111-1181
+	   1194-1196
+	   1235
+
+SEARCH FDCACHE.CPP USING THE KEY WORDS "MIKE TORCHIA"
+TO JUMP RIGHT TO CHANGES
+*******************************************************
+
+
+*Install FUSE 2.9.5
+-In my zip folder move the FUSE-2.9.5 folder to your desktop
+-Now open your terminal and type into the command line "cd ~/Desktop/fuse-2.9.5" this should move you into the fuse folder on your desktop
+-Then type "sudo ./configure"
+-Then "sudo make"
+-Then "sudo make install"
+-After that if everything installed correctly when you type "fusermount --version" in the command line it will tell you version 2.9.5 is installed
+
+*Install S3FS 1.74
+-Before installation you'll need to create an Amazon S3 account at this link http://aws.amazon.com/s3/
+-Once you create an account you'll want to log in and then at the top there'll be a drop down menu called "Services" under that find the service called "S3" and click on that
+-Once there use the button at the top called "Create Bucket" to create a bucket
+-Next in the zip folder I provided for you move the s3fs-1.74 folder to your desktop
+-Before installing s3fs you'll need to install some other tools first. So in the command line you'll want to type these commands using "sudo" before all of them
+
+apt-get install build-essential
+apt-get install libfuse-dev
+apt-get install fuse-utils
+apt-get install libcurl4-openssl-dev
+apt-get install libxml2-dev
+apt-get install mime-support
+
+-After that in order to make sure everything is installed type this command into the command line
+
+sudo apt-get install libfuse-dev libcurl4-openssl-dev libxml++2.6-dev libssl-dev
+
+-Now you'll want to move into the s3fs folder. In the command line type "cd ~/Desktop/s3fs-1.74". That should move you into the folder
+-Then type into the command line "sudo ./configure --prefix=/usr"
+-Then "sudo make"
+-Then "sudo make install"
+-S3fs should be installed on your machine now
+
+*Install OpenSSL
+-In the zip folder, find "openssl-1.0.1s" and move that folder to your desktop
+-In the commnad line type "cd ~/Desktop/openssl-1.0.1s"
+-Type "sudo ./config"
+-Type "sudo make"
+-Type "sudo make test"
+-Type "sudo make install"
+-OpenSSL should be installed on your system now
+
+*Setting up your bucket
+-Go back to your Amazon bucket management page. https://console.aws.amazon.com/s3/home?region=us-west-2
+-Now at the very top right you should see your account name. Clicking that will show a drop down menu. In that menu click "Security Credentials"
+-If you get a pop up window click "Continue to Security Credentials"
+-Click the Plus sign (+) next to "Access Keys (Access Key ID and Secert Access Key)"
+-In that menu click "Create New Access Key" and download that file and extract it to your desktop
+-In that file you'll have 2 lines of text "AWSAccessKeyId" and "AWSSecretKey".
+-In your command line type "cd ~" to move into your home folder
+-Next type "sudo nano .passwd-s3fs"
+-And in that text file you want to copy and paste the values of "AWSAccessKeyId" and "Access Keys (Access Key ID and Secert Access Key)" like this
+
+"AWSAccessKeyId":"Access Keys (Access Key ID and Secert Access Key)"
+
+-Save that file and close it
+-Next type in the command line "sudo chmod 600 .passwd-s3fs"
+
+*Mounting the bucket
+-Type in the command line "cd ~/Desktop/s3fs-1.74"
+-Type "sudo make"
+-Type "cd src"
+-Type "sudo ./s3fs <Name of your bucket here> /mnt -d -o allow_other"
+-Type "cd ~/Desktop"
+-The bucket should be mounted now
+
+*Testing the bucket
+-In the zip folder I've included a text file and two image files (small.gif and shark.jpg). Move all of them to your Desktop
+-(If you're not in the desktop, in the command line type "cd ~/Desktop")
+-Type in the command line "mv Progress_log.txt /mnt"
+-Now when you go to your bucket in the browswer, refresh the page, and when you try to open the progress log. It should be encrypted
+-In the command line type "cd /mnt"
+-Type "cat Progress_log.txt"
+-This should display the log decrypted
+-Type "mv Progress_log.txt ~/Desktop"
+-Type "cd ~/Desktop"
+-Now the progress log should be back on your desktop decyrpted
+
+-Type "mv small.gif /mnt"
+-Refresh your bucket page in your browswer and try to open the picture. It should be encrypted
+-In the command line type "cd /mnt"
+-Type "eog small.gif"
+-The picture should show up decyrpted
+-Close the picture
+-In the command line type "mv small.gif ~/Desktop"
+-Type "cd ~/Desktop"
+-The picture should be back on your desktop decrypted
+
+-In the command line type "mv shark.jpg /mnt"
+-Refresh your bucket page in your browswer and try to open the picture. It should be encrypted
+-In your command line type "cd /mnt"
+-Type "eog shark.jpg"
+-Only a chunk of the image should appear.
+-Close the picture
+-In the command line type "mv shark.jpg ~/Desktop"
+-Type "cd ~/Desktop"
+-The image should be on your desktop with only that same chunk decrypted
+
+*Unmounting the bucket
+-Make sure you are not currently in the bucket
+-In the command line type "sudo fusermount -u /mnt"
+-Type "df"
+-If you dont see "s3fs" the bucket is unmounted
+-Follow the mounting steps above to remount it
+
+
